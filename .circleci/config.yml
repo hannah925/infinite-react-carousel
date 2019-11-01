@@ -63,21 +63,30 @@ jobs:
       - deploy:
           name: Deploy
           command: |
-            git rm -rf .
-            cd ..
+            if [ $CIRCLE_BRANCH == $SOURCE_BRANCH ]; then
+              git config --global user.email $GH_EMAIL
+              git config --global user.name $GH_NAME
 
-            npm run build:gh
-            sudo mkdir -p out
-            sudo cp -a dist/. out/.
+              git clone $CIRCLE_REPOSITORY_URL out
 
-            sudo mkdir -p out/.circleci
-            sudo cp -a .circleci/. out/.circleci/.
-            cd out
+              cd out
+              git checkout $TARGET_BRANCH || git checkout --orphan $TARGET_BRANCH
+              git rm -rf .
+              cd ..
 
-            git add -A
-            git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+              npm run build:gh
+              sudo mkdir -p out
+              sudo cp -a dist/. out/.
 
-            git push origin $TARGET_BRANCH
+              sudo mkdir -p out/.circleci
+              sudo cp -a .circleci/. out/.circleci/.
+              cd out
+
+              git add -A
+              git commit -m "Automated deployment to GitHub Pages: ${CIRCLE_SHA1}" --allow-empty
+
+              git push origin $TARGET_BRANCH
+            fi
 
 workflows:
   version: 2
