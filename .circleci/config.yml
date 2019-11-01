@@ -4,11 +4,13 @@ orbs:
 jobs:
   upload-test:
     build:
-        steps:
-          - run: npm run test
-          - codecov/upload:
-              file: coverage/*.json
-              flags: frontend
+      docker:
+        - image: circleci/node:10.15.3
+      steps:
+        - run: npm run test
+        - codecov/upload:
+            file: coverage/*.json
+            flags: frontend
       
   
 workflows:
@@ -20,7 +22,7 @@ workflows:
         ignore:
           - gh-pages
       docker:
-        - image: circleci/node:12.13.0
+        - image: circleci/node:10.15.3
       working_directory: ~/repo
       environment:
         - SOURCE_BRANCH: master
