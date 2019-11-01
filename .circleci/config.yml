@@ -65,3 +65,7 @@ workflows:
           branches:
             ignore:
               - gh-pages
+              - /feature\/.*/
+    - upload-codecov:
+        requires:
+          - build-and-deploy
