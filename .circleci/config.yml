@@ -26,7 +26,7 @@ workflows:
         working_directory: ~/repo
         environment:
           - SOURCE_BRANCH: master
-          - TARGET_BRANCH: gh-pages    
+          - TARGET_BRANCH: gh-pages
         steps:
           - checkout
           - restore_cache:
@@ -67,4 +67,3 @@ workflows:
 
                   git push origin $TARGET_BRANCH
                 fi
-    
