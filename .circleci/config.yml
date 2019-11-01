@@ -1,6 +1,4 @@
-version: 2.1
-orbs:
-  codecov: codecov/codecov@1.0.4
+version: 2
 jobs:
   build:
     branches:
@@ -11,7 +9,7 @@ jobs:
     working_directory: ~/repo
     environment:
       - SOURCE_BRANCH: master
-      - TARGET_BRANCH: gh-pages
+      - TARGET_BRANCH: gh-pages    
     steps:
       - checkout
       - restore_cache:
@@ -25,10 +23,6 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: npm run test
-      - codecov/upload:
-          file: coverage/*.json
-          flags: frontend
       - deploy:
           name: Deploy
           command: |
@@ -56,3 +50,15 @@ jobs:
 
               git push origin $TARGET_BRANCH
             fi
+  workflows:
+    version: 2.1
+    orbs:
+      codecov: codecov/codecov@1.0.4
+    upload-test:
+      jobs:
+        build:
+          steps:
+            - run: npm run test
+            - codecov/upload:
+                file: coverage/*.json
+                flags: frontend
