@@ -1,5 +1,14 @@
 version: 2.1
 jobs:
+  upload-codecov:
+    docker:
+      - image: circleci/node:10.15.3
+    working_directory: ~/repo
+    steps:
+      - run: npm run test
+      - codecov/upload:
+          file: coverage/*.json
+          flags: frontend
   build-and-deploy:
     docker:
       - image: circleci/node:10.15.3
@@ -47,25 +56,20 @@ jobs:
 
               git push origin $TARGET_BRANCH
             fi
-  upload-codecov:
-    docker:
-      - image: circleci/node:10.15.3
-    working_directory: ~/repo
-    steps:
-      - run: npm run test
-      - codecov/upload:
-          file: coverage/*.json
-          flags: frontend
 
 workflows:
   version: 2
-  jobs:
-    - build-and-deploy:
-        filters:  # using regex filters requires the entire branch to match
-          branches:
-            ignore:
-              - gh-pages
-              - /feature\/.*/
-    - upload-codecov:
-        requires:
-          - build-and-deploy
+  build:
+    jobs:
+      - upload-codecov:
+          filters:
+            branches:
+              only:
+                - master
+      - build-and-deploy:
+          requires:
+            - upload-codecov
+          filters:
+            branches:
+              only:
+                - master
