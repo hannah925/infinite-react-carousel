@@ -59,10 +59,9 @@ jobs:
 
 workflows:
   version: 2
-  build-and-deploy:
-    jobs:
-      - build:
-          filters:  # using regex filters requires the entire branch to match
-            branches:
-              ignore:
-                - gh-pages
+  jobs:
+    - build-and-deploy:
+        filters:  # using regex filters requires the entire branch to match
+          branches:
+            ignore:
+              - gh-pages
